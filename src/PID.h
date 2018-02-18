@@ -18,6 +18,12 @@ public:
   double Kd_;
 
   /*
+  * Sum of Square Error
+  */
+  int iter_;
+  double sse_;
+
+  /*
   * Constructor
   */
   PID();
@@ -41,6 +47,11 @@ public:
   * Calculate the total PID error.
   */
   double TotalError();
+
+  /*
+  * Calculate the root mean square error
+  */
+  double RootMeanSquareError();
 };
 
 #endif /* PID_H */

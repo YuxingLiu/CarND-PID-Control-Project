@@ -18,12 +18,18 @@ void PID::Init(double Kp, double Ki, double Kd) {
   p_error_ = 0.0;
   i_error_ = 0.0;
   d_error_ = 0.0;
+
+  iter_ = 0;
+  sse_ = 0.0;
 }
 
 void PID::UpdateError(double cte) {
   i_error_ += cte;
   d_error_ = cte - p_error_;
   p_error_ = cte;
+
+  iter_ += 1;
+  sse_ += cte * cte;
 }
 
 double PID::TotalError() {
@@ -36,5 +42,12 @@ double PID::TotalError() {
     steer = -1;
 
   return steer;
+}
+
+double PID::RootMeanSquareError() {
+  if(iter_ == 0)
+    return 0.0;
+  else
+    return sse_ / iter_;
 }
 
