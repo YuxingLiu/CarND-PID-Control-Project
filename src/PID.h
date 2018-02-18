@@ -17,10 +17,15 @@ public:
   double Ki_;
   double Kd_;
 
+ /*
+  * Actuator Constraints
+  */
+  double lb_;
+  double ub_;
+
   /*
   * Max Cross Tracking Error
   */
-  int max_iter_;
   double max_cte_;
 
   /*
@@ -42,7 +47,7 @@ public:
   /*
   * Initialize PID.
   */
-  void Init(double Kp, double Ki, double Kd);
+  void Init(double Kp, double Ki, double Kd, double lb, double ub);
 
   /*
   * Update the PID error variables given cross track error.

@@ -32,13 +32,12 @@ int main()
 {
   uWS::Hub h;
 
-  PID pid;
-  // TODO: Initialize the pid variable.
-  pid.Init(0.12, 0.0, 3.0);
- // pid.Init(0.1, 0.0, 1);
- // pid.Init(0.01, 0.005, 0.001);
+  PID pid_steering, pid_throttle;
+  // Initialize the pid variable (Kp, Ki, Kd, lb, ub).
+  pid_steering.Init(0.12, 0.0, 3.0, -1.0, 1.0);
+  pid_throttle.Init(0.1, 0.0001, 2.0, 0.0, 1.0);
 
-  h.onMessage([&pid](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
+  h.onMessage([&pid_steering, &pid_throttle](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
     // "42" at the start of the message means there's a websocket message event.
     // The 4 signifies a websocket message
     // The 2 signifies a websocket event
@@ -53,26 +52,26 @@ int main()
           double cte = std::stod(j[1]["cte"].get<std::string>());
           double speed = std::stod(j[1]["speed"].get<std::string>());
           double angle = std::stod(j[1]["steering_angle"].get<std::string>());
-          double steer_value, root_mean_sq_err;
-          /*
-          * TODO: Calcuate steering value here, remember the steering value is
-          * [-1, 1].
-          * NOTE: Feel free to play around with the throttle and speed. Maybe use
-          * another PID controller to control the speed!
-          */
-	  pid.UpdateError(cte);
-	  steer_value = pid.TotalError();
-	  root_mean_sq_err = pid.RootMeanSquareError();
+
+	  // Steering control
+	  pid_steering.UpdateError(-cte);
+	  double steer_value = pid_steering.TotalError();
+	  double root_mean_sq_err = pid_steering.RootMeanSquareError();
+
+          // Throttle control;
+          double speed_ref = 40.0;
+          double error_speed = speed_ref - speed;
+          pid_throttle.UpdateError(error_speed);
+          double throttle_value = pid_throttle.TotalError();
           
           // DEBUG
-	  std::cout << "Iter: " << pid.iter_ << " RMSE: " << root_mean_sq_err << std::endl;
- 	  std::cout << "Max cte: " << pid.max_cte_ << " at Iter: " << pid.max_iter_ << std::endl;
-          std::cout << "CTE: " << cte << " Steering Value: " << steer_value << std::endl;
+	  std::cout << "Iter: " << pid_steering.iter_ << "\t RMSE: " << root_mean_sq_err << "\t\t Max cte: " << pid_steering.max_cte_ << std::endl;
+          std::cout << "CTE: " << cte << "\t Steering: " << steer_value << "\t Throttle: " << throttle_value << std::endl;
 	  std::cout << std::endl;
 
           json msgJson;
           msgJson["steering_angle"] = steer_value;
-          msgJson["throttle"] = 0.3;
+          msgJson["throttle"] = throttle_value;
           auto msg = "42[\"steer\"," + msgJson.dump() + "]";
           // std::cout << msg << std::endl;
           ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);

@@ -1,5 +1,5 @@
 #include "PID.h"
-#include <cmath>
+#include <math.h>
 
 using namespace std;
 
@@ -11,16 +11,18 @@ PID::PID() {}
 
 PID::~PID() {}
 
-void PID::Init(double Kp, double Ki, double Kd) {
+void PID::Init(double Kp, double Ki, double Kd, double lb, double ub) {
   Kp_ = Kp;
   Ki_ = Ki;
   Kd_ = Kd;
+
+  lb_ = lb;
+  ub_ = ub;
 
   p_error_ = 0.0;
   i_error_ = 0.0;
   d_error_ = 0.0;
 
-  max_iter_ = 0;
   max_cte_ = 0.0;
 
   iter_ = 0;
@@ -35,22 +37,19 @@ void PID::UpdateError(double cte) {
   iter_ += 1;
   sse_ += cte * cte;
 
-  if(max_cte_ < abs(cte)) {
-    max_cte_ = abs(cte);
-    max_iter_ = iter_;
-  }
+  if(max_cte_ < fabs(cte))
+    max_cte_ = fabs(cte);
 }
 
 double PID::TotalError() {
-  double steer = - Kp_ * p_error_ - Ki_ * i_error_ - Kd_ * d_error_;
+  double total = Kp_ * p_error_ + Ki_ * i_error_ + Kd_ * d_error_;
 
-  // steering value is in [-1, 1]
-  if(steer > 1)
-    steer = 1;
-  else if (steer < -1)
-    steer = -1;
+  if(total > ub_)
+    total = ub_;
+  else if (total < lb_)
+    total = lb_;
 
-  return steer;
+  return total;
 }
 
 double PID::RootMeanSquareError() {
