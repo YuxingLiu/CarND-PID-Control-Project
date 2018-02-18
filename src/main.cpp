@@ -34,7 +34,7 @@ int main()
 
   PID pid;
   // TODO: Initialize the pid variable.
-  pid.Init(0.1, 0.0, 3.0);
+  pid.Init(0.12, 0.0, 3.0);
  // pid.Init(0.1, 0.0, 1);
  // pid.Init(0.01, 0.005, 0.001);
 
@@ -66,6 +66,7 @@ int main()
           
           // DEBUG
 	  std::cout << "Iter: " << pid.iter_ << " RMSE: " << root_mean_sq_err << std::endl;
+ 	  std::cout << "Max cte: " << pid.max_cte_ << " at Iter: " << pid.max_iter_ << std::endl;
           std::cout << "CTE: " << cte << " Steering Value: " << steer_value << std::endl;
 	  std::cout << std::endl;
 

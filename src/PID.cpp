@@ -1,4 +1,5 @@
 #include "PID.h"
+#include <cmath>
 
 using namespace std;
 
@@ -19,6 +20,9 @@ void PID::Init(double Kp, double Ki, double Kd) {
   i_error_ = 0.0;
   d_error_ = 0.0;
 
+  max_iter_ = 0;
+  max_cte_ = 0.0;
+
   iter_ = 0;
   sse_ = 0.0;
 }
@@ -30,6 +34,11 @@ void PID::UpdateError(double cte) {
 
   iter_ += 1;
   sse_ += cte * cte;
+
+  if(max_cte_ < abs(cte)) {
+    max_cte_ = abs(cte);
+    max_iter_ = iter_;
+  }
 }
 
 double PID::TotalError() {

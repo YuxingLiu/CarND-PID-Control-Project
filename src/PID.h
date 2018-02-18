@@ -18,6 +18,12 @@ public:
   double Kd_;
 
   /*
+  * Max Cross Tracking Error
+  */
+  int max_iter_;
+  double max_cte_;
+
+  /*
   * Sum of Square Error
   */
   int iter_;
