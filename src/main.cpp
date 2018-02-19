@@ -42,9 +42,9 @@ int main()
   bool is_pid_tuned = 0;
   std::vector<double> Kp_array = {0.08, 0.1, 0.12};
   std::vector<double> Zd_array = {20, 25, 30, 35, 40};
-  int epoch = 0;
+  std::vector<double> Ki_array = {5e-8};
 
-  h.onMessage([&pid_steering, &pid_throttle, &is_pid_tuned, &Kp_array, &Zd_array, &epoch](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
+  h.onMessage([&pid_steering, &pid_throttle, &is_pid_tuned, &Kp_array, &Zd_array, &Ki_array](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
     // "42" at the start of the message means there's a websocket message event.
     // The 4 signifies a websocket message
     // The 2 signifies a websocket event
@@ -58,7 +58,7 @@ int main()
           // j[1] is the data JSON object
           double cte = std::stod(j[1]["cte"].get<std::string>());
           double speed = std::stod(j[1]["speed"].get<std::string>());
-          double angle = std::stod(j[1]["steering_angle"].get<std::string>());
+          //double angle = std::stod(j[1]["steering_angle"].get<std::string>());
 
 	  // Steering control
 	  pid_steering.UpdateError(-cte);
@@ -72,26 +72,10 @@ int main()
 
 	  // Steering PID tuning
 	  if(!is_pid_tuned && pid_steering.iter_ == 260) {
-            std::cout << std::fixed;
-            std::cout << "Epoch: " << epoch << "\tKp: " << pid_steering.Kp_ << "\tKd: " << pid_steering.Kd_ << "\tIter: " << pid_steering.iter_ << "\tMSE: " << pid_steering.mse_ << "\tMax cte: " << pid_steering.max_cte_ << std::endl;
-	    std::cout << std::endl;
-
-	    if(epoch < Kp_array.size()*Zd_array.size()) {
-	      int i_p = epoch / Zd_array.size();
-	      int i_d = epoch % Zd_array.size();
-	      double Kp = Kp_array[i_p];
-	      double Kd = Kp_array[i_p] * Zd_array[i_d];
-
-	      pid_steering.Init(Kp, 0.0, Kd);
-	      epoch += 1;
-	    }else {
-	      is_pid_tuned = 1;
-	    }
+	    is_pid_tuned = pid_steering.TunePID(Kp_array, Zd_array, Ki_array);
 	  }else if(is_pid_tuned) {  // PID is tuned
 //            std::cout << std::fixed;
-//	    std::cout << "Iter: \t" << pid_steering.iter_ << "\t\t MSE: \t\t" << pid_steering.mse_ << "\t Max cte: \t" << pid_steering.max_cte_ << std::endl;
 //            std::cout << "CTE: \t" << cte << "\t Steering: \t" << steer_value << "\t Throttle: \t" << throttle_value << std::endl;
-//	    std::cout << std::endl;
 	  }
 
 

@@ -1,6 +1,8 @@
 #ifndef PID_H
 #define PID_H
 
+#include <vector>
+
 class PID {
 public:
   /*
@@ -30,12 +32,13 @@ public:
   double mse_;
 
   /*
-  * Best MSE and Parameters for PID Tuning
+  * Best MSE and PID Gains for Tuning
   */
   double best_mse_;
   double best_Kp_;
   double best_Ki_;
   double best_Kd_;
+  int epoch_;
 
   /*
   * Constructor
@@ -61,6 +64,12 @@ public:
   * Calculate the total PID error.
   */
   double TotalError(double lb, double ub);
+
+  /*
+  * Tune the PID gains by gridding the design space.
+  */
+  bool TunePID(std::vector<double> Kp_array, std::vector<double> Zd_array, std::vector<double> Ki_array);
+
 };
 
 #endif /* PID_H */
