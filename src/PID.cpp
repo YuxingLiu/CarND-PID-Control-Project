@@ -62,9 +62,8 @@ bool PID::TunePID(std::vector<double> Kp_array, std::vector<double> Zd_array, st
   int n_i = Ki_array.size();
 
   // Output current step info
-  //std::cout << std::fixed;
-  std::cout << std::scientific;
-  std::cout << "Epoch: " << epoch_ << "\tKp: " << Kp_ << "\tKi: " << Ki_ << "\tKd: " << Kd_ << "\tIter: " << iter_ << "\tMSE: " << mse_ << "\tMax cte: " << max_cte_ << std::endl;
+  std::cout << std::fixed;
+  std::cout << "Epoch: " << epoch_ << "\tKp: " << Kp_ << "\tKi: " << Ki_ << "\tKd: " << Kd_ << "\tMSE: " << mse_ << "\tMax cte: " << max_cte_ << "\tIter: " << iter_ << std::endl;
   std::cout << std::endl;
 
   // Update the best

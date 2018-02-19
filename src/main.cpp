@@ -40,9 +40,9 @@ int main()
 
   // Flag, if steering PID is tuned
   bool is_pid_tuned = 0;
-  std::vector<double> Kp_array = {0.08, 0.1, 0.12};
-  std::vector<double> Zd_array = {20, 25, 30, 35, 40};
-  std::vector<double> Ki_array = {5e-8};
+  std::vector<double> Kp_array = {0.1, 0.15, 0.2, 0.25};
+  std::vector<double> Zd_array = {20, 30, 40, 50};
+  std::vector<double> Ki_array = {1e-5, 1e-4, 1e-3};
 
   h.onMessage([&pid_steering, &pid_throttle, &is_pid_tuned, &Kp_array, &Zd_array, &Ki_array](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
     // "42" at the start of the message means there's a websocket message event.
@@ -70,12 +70,15 @@ int main()
           pid_throttle.UpdateError(error_speed);
           double throttle_value = pid_throttle.TotalError(0.0, 1.0);
 
-	  // Steering PID tuning
-	  if(!is_pid_tuned && pid_steering.iter_ == 260) {
+	  // Estimated steps for one drive cycle
+          int iter_1cycle = 5800;
+	  if(!is_pid_tuned && pid_steering.iter_ == iter_1cycle) {
+	    // Steering PID tuning
 	    is_pid_tuned = pid_steering.TunePID(Kp_array, Zd_array, Ki_array);
-	  }else if(is_pid_tuned) {  // PID is tuned
+	  }else if(is_pid_tuned) {
+	    // PID is tuned
 //            std::cout << std::fixed;
-//            std::cout << "CTE: \t" << cte << "\t Steering: \t" << steer_value << "\t Throttle: \t" << throttle_value << std::endl;
+//            std::cout << "Iter: " << pid_steering.iter_ << "\tCTE: " << cte << "\tSteering: " << steer_value << "\tThrottle: " << throttle_value << std::endl;
 	  }
 
 
