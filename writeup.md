@@ -11,7 +11,7 @@ The goal of this project is to implement a PID controller in C++ to drive a vehi
 
 [image1]: ./images/MSE_vs_KpKd.png "Mean Square Error vs. PD Gains"
 
-## PID Parameter Tuning
+## PID Parameters Tuning
 
 
 
