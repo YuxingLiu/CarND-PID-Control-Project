@@ -34,9 +34,9 @@ int main()
   uWS::Hub h;
 
   PID pid_steering, pid_throttle;
-  // Initialize the pid variable (Kp, Ki, Kd, lb, ub).
-  pid_steering.Init(0.12, 0.0, 3.0, -1.0, 1.0);
-  pid_throttle.Init(0.1, 0.0001, 2.0, 0.0, 1.0);
+  // Initialize the pid variable.
+  pid_steering.Init(0.12, 0.0, 3.0);
+  pid_throttle.Init(0.1, 0.0001, 2.0);
 
   // Flag, if steering PID is tuned
   bool is_pid_tuned = 0;
@@ -62,13 +62,13 @@ int main()
 
 	  // Steering control
 	  pid_steering.UpdateError(-cte);
-	  double steer_value = pid_steering.TotalError();
+	  double steer_value = pid_steering.TotalError(-1.0, 1.0);
 
           // Throttle control;
           double speed_ref = 40.0;
           double error_speed = speed_ref - speed;
           pid_throttle.UpdateError(error_speed);
-          double throttle_value = pid_throttle.TotalError();
+          double throttle_value = pid_throttle.TotalError(0.0, 1.0);
 
 	  // Steering PID tuning
 	  if(!is_pid_tuned && pid_steering.iter_ == 260) {
@@ -82,7 +82,7 @@ int main()
 	      double Kp = Kp_array[i_p];
 	      double Kd = Kp_array[i_p] * Zd_array[i_d];
 
-	      pid_steering.Init(Kp, 0.0, Kd, -1.0, 1.0);
+	      pid_steering.Init(Kp, 0.0, Kd);
 	      epoch += 1;
 	    }else {
 	      is_pid_tuned = 1;

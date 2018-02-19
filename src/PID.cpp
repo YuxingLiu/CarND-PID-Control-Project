@@ -11,13 +11,10 @@ PID::PID() {}
 
 PID::~PID() {}
 
-void PID::Init(double Kp, double Ki, double Kd, double lb, double ub) {
+void PID::Init(double Kp, double Ki, double Kd) {
   Kp_ = Kp;
   Ki_ = Ki;
   Kd_ = Kd;
-
-  lb_ = lb;
-  ub_ = ub;
 
   p_error_ = 0.0;
   i_error_ = 0.0;
@@ -43,13 +40,14 @@ void PID::UpdateError(double cte) {
     max_cte_ = fabs(cte);
 }
 
-double PID::TotalError() {
+double PID::TotalError(double lb, double ub) {
   double total = Kp_ * p_error_ + Ki_ * i_error_ + Kd_ * d_error_;
 
-  if(total > ub_)
-    total = ub_;
-  else if (total < lb_)
-    total = lb_;
+  // Saturation due to actuator limits
+  if(total > ub)
+    total = ub;
+  else if (total < lb)
+    total = lb;
 
   return total;
 }

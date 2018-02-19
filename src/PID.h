@@ -17,27 +17,25 @@ public:
   double Ki_;
   double Kd_;
 
- /*
-  * Actuator Constraints
-  */
-  double lb_;
-  double ub_;
-
   /*
   * Max Cross Tracking Error
   */
   double max_cte_;
 
   /*
-  * Sum of Square Error
+  * Mean Square Error
   */
   int iter_;
   double sse_;
+  double mse_;
 
   /*
-  * Mean Square Error
+  * Best MSE and Parameters for PID Tuning
   */
-  double mse_;
+  double best_mse_;
+  double best_Kp_;
+  double best_Ki_;
+  double best_Kd_;
 
   /*
   * Constructor
@@ -52,7 +50,7 @@ public:
   /*
   * Initialize PID.
   */
-  void Init(double Kp, double Ki, double Kd, double lb, double ub);
+  void Init(double Kp, double Ki, double Kd);
 
   /*
   * Update the PID error variables given cross track error.
@@ -62,7 +60,7 @@ public:
   /*
   * Calculate the total PID error.
   */
-  double TotalError();
+  double TotalError(double lb, double ub);
 };
 
 #endif /* PID_H */
