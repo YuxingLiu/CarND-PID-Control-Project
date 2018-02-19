@@ -27,6 +27,7 @@ void PID::Init(double Kp, double Ki, double Kd, double lb, double ub) {
 
   iter_ = 0;
   sse_ = 0.0;
+  mse_ = 0.0;
 }
 
 void PID::UpdateError(double cte) {
@@ -36,6 +37,7 @@ void PID::UpdateError(double cte) {
 
   iter_ += 1;
   sse_ += cte * cte;
+  mse_ = sse_ / iter_;
 
   if(max_cte_ < fabs(cte))
     max_cte_ = fabs(cte);
@@ -50,12 +52,5 @@ double PID::TotalError() {
     total = lb_;
 
   return total;
-}
-
-double PID::RootMeanSquareError() {
-  if(iter_ == 0)
-    return 0.0;
-  else
-    return sse_ / iter_;
 }
 

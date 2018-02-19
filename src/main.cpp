@@ -63,7 +63,6 @@ int main()
 	  // Steering control
 	  pid_steering.UpdateError(-cte);
 	  double steer_value = pid_steering.TotalError();
-	  double root_mean_sq_err = pid_steering.RootMeanSquareError();
 
           // Throttle control;
           double speed_ref = 40.0;
@@ -74,7 +73,7 @@ int main()
 	  // Steering PID tuning
 	  if(!is_pid_tuned && pid_steering.iter_ == 260) {
             std::cout << std::fixed;
-            std::cout << "Epoch: " << epoch << "\tKp: " << pid_steering.Kp_ << "\tKd: " << pid_steering.Kd_ << "\tIter: " << pid_steering.iter_ << "\tRMSE: " << root_mean_sq_err << "\tMax cte: " << pid_steering.max_cte_ << std::endl;
+            std::cout << "Epoch: " << epoch << "\tKp: " << pid_steering.Kp_ << "\tKd: " << pid_steering.Kd_ << "\tIter: " << pid_steering.iter_ << "\tMSE: " << pid_steering.mse_ << "\tMax cte: " << pid_steering.max_cte_ << std::endl;
 	    std::cout << std::endl;
 
 	    if(epoch < Kp_array.size()*Zd_array.size()) {
@@ -90,7 +89,7 @@ int main()
 	    }
 	  }else if(is_pid_tuned) {  // PID is tuned
 //            std::cout << std::fixed;
-//	    std::cout << "Iter: \t" << pid_steering.iter_ << "\t\t RMSE: \t\t" << root_mean_sq_err << "\t Max cte: \t" << pid_steering.max_cte_ << std::endl;
+//	    std::cout << "Iter: \t" << pid_steering.iter_ << "\t\t MSE: \t\t" << pid_steering.mse_ << "\t Max cte: \t" << pid_steering.max_cte_ << std::endl;
 //            std::cout << "CTE: \t" << cte << "\t Steering: \t" << steer_value << "\t Throttle: \t" << throttle_value << std::endl;
 //	    std::cout << std::endl;
 	  }

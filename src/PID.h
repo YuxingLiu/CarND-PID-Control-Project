@@ -35,6 +35,11 @@ public:
   double sse_;
 
   /*
+  * Mean Square Error
+  */
+  double mse_;
+
+  /*
   * Constructor
   */
   PID();
@@ -58,11 +63,6 @@ public:
   * Calculate the total PID error.
   */
   double TotalError();
-
-  /*
-  * Calculate the root mean square error
-  */
-  double RootMeanSquareError();
 };
 
 #endif /* PID_H */
