@@ -3,6 +3,7 @@
 #include "json.hpp"
 #include "PID.h"
 #include <math.h>
+#include <vector>
 
 // for convenience
 using json = nlohmann::json;
@@ -37,7 +38,13 @@ int main()
   pid_steering.Init(0.12, 0.0, 3.0, -1.0, 1.0);
   pid_throttle.Init(0.1, 0.0001, 2.0, 0.0, 1.0);
 
-  h.onMessage([&pid_steering, &pid_throttle](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
+  // Flag, if steering PID is tuned
+  bool is_pid_tuned = 0;
+  std::vector<double> Kp_array = {0.08, 0.1, 0.12};
+  std::vector<double> Zd_array = {20, 25, 30, 35, 40};
+  int epoch = 0;
+
+  h.onMessage([&pid_steering, &pid_throttle, &is_pid_tuned, &Kp_array, &Zd_array, &epoch](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length, uWS::OpCode opCode) {
     // "42" at the start of the message means there's a websocket message event.
     // The 4 signifies a websocket message
     // The 2 signifies a websocket event
@@ -63,11 +70,31 @@ int main()
           double error_speed = speed_ref - speed;
           pid_throttle.UpdateError(error_speed);
           double throttle_value = pid_throttle.TotalError();
-          
-          // DEBUG
-	  std::cout << "Iter: " << pid_steering.iter_ << "\t RMSE: " << root_mean_sq_err << "\t\t Max cte: " << pid_steering.max_cte_ << std::endl;
-          std::cout << "CTE: " << cte << "\t Steering: " << steer_value << "\t Throttle: " << throttle_value << std::endl;
-	  std::cout << std::endl;
+
+	  // Steering PID tuning
+	  if(!is_pid_tuned && pid_steering.iter_ == 260) {
+            std::cout << std::fixed;
+            std::cout << "Epoch: " << epoch << "\tKp: " << pid_steering.Kp_ << "\tKd: " << pid_steering.Kd_ << "\tIter: " << pid_steering.iter_ << "\tRMSE: " << root_mean_sq_err << "\tMax cte: " << pid_steering.max_cte_ << std::endl;
+	    std::cout << std::endl;
+
+	    if(epoch < Kp_array.size()*Zd_array.size()) {
+	      int i_p = epoch / Zd_array.size();
+	      int i_d = epoch % Zd_array.size();
+	      double Kp = Kp_array[i_p];
+	      double Kd = Kp_array[i_p] * Zd_array[i_d];
+
+	      pid_steering.Init(Kp, 0.0, Kd, -1.0, 1.0);
+	      epoch += 1;
+	    }else {
+	      is_pid_tuned = 1;
+	    }
+	  }else if(is_pid_tuned) {  // PID is tuned
+//            std::cout << std::fixed;
+//	    std::cout << "Iter: \t" << pid_steering.iter_ << "\t\t RMSE: \t\t" << root_mean_sq_err << "\t Max cte: \t" << pid_steering.max_cte_ << std::endl;
+//            std::cout << "CTE: \t" << cte << "\t Steering: \t" << steer_value << "\t Throttle: \t" << throttle_value << std::endl;
+//	    std::cout << std::endl;
+	  }
+
 
           json msgJson;
           msgJson["steering_angle"] = steer_value;
