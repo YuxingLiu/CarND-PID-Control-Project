@@ -13,8 +13,25 @@ The goal of this project is to implement a PID controller in C++ to drive a vehi
 
 ## PID Parameters Tuning
 
+In general, the proportional control action is the basic component of a PID control to reduce the tracking error, but not quite effective to deal with undesired transient performance (slow response, overshoot, oscillation) and steady-state error. The integral control action is mainly used to reduce the steady-state error, especially in presence of systematic bias or disturbances. The derivative control action provides an early corrective action by anticipating the tracking error, resulting in improved transient performance and stability.
 
+In this project, since the reference trajectory is time varying and small offsets from the lane center is acceptable, the transient performance should be the most important design criterion. Therefore, a PD control is first designed, then the integral control is added to see if it can further improve the control system performance. A combination of manual tuning and discrete optimization is used to determine the PID gains.
 
+### Step 1: Feasible design parameter space
+
+First, several sets of PID gains `(Kp, Ki, Kd)` were tested, in order to identify the feasible range of each parameter. Roughly speaking, a set of PID gains is feasible if the car won't leave the drivable portion of the track. The design space is found to be:
+
+```
+0.10 <= Kp <= 0.25
+20 <= Kd/Kp <= 50
+0 <= Ki <= 0.001
+```
+
+### Step 2: PD tuning
+
+A combination of `Kp` and `Kd` was found in the design space, which minimizes the mean square error (MSE) of a complete drive cycle. To avoid overly large computations, the design space is discretized into a sparse grid. The sets of PD gains and corresponding MSE values are shown in the following figure and table.  
+
+![alt text][image1]
 
 | Kp    | Ki    | Kd    | MSE   |
 |:-----:|:-----:|:-----:|:-----:| 
@@ -39,4 +56,4 @@ The goal of this project is to implement a PID controller in C++ to drive a vehi
 |       | 1e-4  |       | 0.168 | 
 |       | 1e-3  |       | 0.143 | 
 
-![alt text][image1]
+![](./images/clip2.gif)
