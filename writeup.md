@@ -15,7 +15,7 @@ The goal of this project is to implement a PID controller in C++ to drive a vehi
 
 In general, the proportional control action is the basic component of a PID control to reduce the tracking error, but not quite effective to deal with undesired transient performance (slow response, overshoot, oscillation) and steady-state error. The integral control action is mainly used to reduce the steady-state error, especially in presence of systematic bias or disturbances. The derivative control action provides an early corrective action by anticipating the tracking error, resulting in improved transient performance and stability.
 
-In this project, since the reference trajectory is time varying and small offsets from the lane center is acceptable, the transient performance should be the most important design criterion. Therefore, a PD control is first designed, then the integral control is added to see if it can further improve the control system performance. A combination of manual tuning and discrete optimization is used to determine the PID gains.
+In this project, since the reference trajectory is time varying and small offsets from the lane center is acceptable, the transient performance should be the most important design criterion. Therefore, a PD control is first designed, then the integral control is added to see if it can further improve the control system performance. A combination of manual tuning and discrete optimization is used, and the PID gains is finally chosen to be (0.25, 0.001, 7.5).
 
 ### Step 1: Feasible design parameter space
 
@@ -29,7 +29,7 @@ First, several sets of PID gains `(Kp, Ki, Kd)` are tested, in order to identify
 
 ### Step 2: PD tuning
 
-A combination of `Kp` and `Kd` is chosen from the design space, which yields the minimum mean square error (MSE) of a complete drive cycle. To exclude the disturbing effect of varying vehicle speeds on the MSE, a PID controller of throttle is applied to maintain a constant vehicle speed at 40 mph. The PID gains are manually tuend as (0.1, 0.0001, 2.0).
+A combination of `Kp` and `Kd` is chosen from the design space, which yields the minimum mean square error (MSE) of a complete drive cycle. To exclude the disturbing effect of varying vehicle speeds on the MSE, a PID controller of throttle is applied to maintain a constant vehicle speed at 40 mph. The PID gains are manually tuned as (0.1, 0.0001, 2.0).
 
 To avoid overly large computations, the design space is discretized into a sparse grid. The sets of PD gains and corresponding MSE values are shown in the following figure and table. It can be seen that a large gain `Kp` can effectively reduce MSE, while the open loop zero `-Kd/Kp` should be placed around -30.
 
@@ -57,5 +57,14 @@ To avoid overly large computations, the design space is discretized into a spars
 |       | 1e-5  |       | 0.267 | 
 |       | 1e-4  |       | 0.168 | 
 |       | 1e-3  |       | 0.143 | 
+
+### Step 3: I tuning
+
+Once `Kp` and `Kd` is determined, the integral action is added. It can be seen the MSE can be further reduced by relatively large `Ki`. The final hyperparameters and corresponding simulation results are shown below.
+
+| Kp    | Ki    | Kd    | 
+|:-----:|:-----:|:-----:|
+| 0.25  | 1e-3  | 7.5   |
+
 
 ![](./images/clip2.gif)
