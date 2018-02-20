@@ -19,7 +19,7 @@ In this project, since the reference trajectory is time varying and small offset
 
 ### Step 1: Feasible design parameter space
 
-First, several sets of PID gains `(Kp, Ki, Kd)` were tested, in order to identify the feasible range of each parameter. Roughly speaking, a set of PID gains is feasible if the car won't leave the drivable portion of the track. The design space is found to be:
+First, several sets of PID gains `(Kp, Ki, Kd)` are tested, in order to identify the feasible range of each parameter. Roughly speaking, a set of PID gains is feasible if the car won't leave the drivable portion of the track. The design space is found to be:
 
 ```
 0.10 <= Kp <= 0.25
@@ -29,7 +29,9 @@ First, several sets of PID gains `(Kp, Ki, Kd)` were tested, in order to identif
 
 ### Step 2: PD tuning
 
-A combination of `Kp` and `Kd` was found in the design space, which minimizes the mean square error (MSE) of a complete drive cycle. To avoid overly large computations, the design space is discretized into a sparse grid. The sets of PD gains and corresponding MSE values are shown in the following figure and table.  
+A combination of `Kp` and `Kd` is chosen from the design space, which yields the minimum mean square error (MSE) of a complete drive cycle. To exclude the disturbing effect of varying vehicle speeds on the MSE, a PID controller of throttle is applied to maintain a constant vehicle speed at 40 mph. The PID gains are manually tuend as (0.1, 0.0001, 2.0).
+
+To avoid overly large computations, the design space is discretized into a sparse grid. The sets of PD gains and corresponding MSE values are shown in the following figure and table. It can be seen that a large gain `Kp` can effectively reduce MSE, while the open loop zero `-Kd/Kp` should be placed around -30.
 
 ![alt text][image1]
 
