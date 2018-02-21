@@ -58,7 +58,7 @@ To avoid overly large computations, the design space is discretized into a spars
 
 ### Step 3: I tuning
 
-Once `Kp` and `Kd` is determined, the integral action is added. It can be seen the MSE can be further reduced by relatively large `Ki`. The final hyperparameters are listed below, and the corresponding simulation video can be found [here](https://youtu.be/u1KReJk7w78).
+Once `Kp` and `Kd` are determined, the integral action is added. It can be seen the MSE can be further reduced by relatively large `Ki`. The final hyperparameters are listed below, and the corresponding simulation video can be found [here](https://youtu.be/u1KReJk7w78).
 
 | Kp    | Ki    | Kd    | 
 |:-----:|:-----:|:-----:|
