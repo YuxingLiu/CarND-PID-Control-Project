@@ -35,11 +35,11 @@ int main()
 
   PID pid_steering, pid_throttle;
   // Initialize the pid variable.
-  pid_steering.Init(0.12, 0.0, 3.0);
+  pid_steering.Init(0.25, 1e-3, 7.5);
   pid_throttle.Init(0.1, 0.0001, 2.0);
 
   // Flag, if steering PID is tuned
-  bool is_pid_tuned = 0;
+  bool is_pid_tuned = 1;
   std::vector<double> Kp_array = {0.1, 0.15, 0.2, 0.25};
   std::vector<double> Zd_array = {20, 30, 40, 50};
   std::vector<double> Ki_array = {1e-5, 1e-4, 1e-3};
