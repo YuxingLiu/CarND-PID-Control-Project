@@ -3,8 +3,6 @@
 
 The goal of this project is to implement a PID controller in C++ to drive a vehicle around the track in a [simulator](https://github.com/udacity/self-driving-car-sim). Escentially, the PID controller manipulates the steering wheel to minimize the cross track error (CTE).
 
-![](./images/clip1.gif)
-
 ---
 
 [//]: # (Image References)
@@ -60,11 +58,8 @@ To avoid overly large computations, the design space is discretized into a spars
 
 ### Step 3: I tuning
 
-Once `Kp` and `Kd` is determined, the integral action is added. It can be seen the MSE can be further reduced by relatively large `Ki`. The final hyperparameters and corresponding simulation results are shown below.
+Once `Kp` and `Kd` is determined, the integral action is added. It can be seen the MSE can be further reduced by relatively large `Ki`. The final hyperparameters are listed below, and the corresponding simulation video can be found [here](https://youtu.be/u1KReJk7w78).
 
 | Kp    | Ki    | Kd    | 
 |:-----:|:-----:|:-----:|
 | 0.25  | 1e-3  | 7.5   |
-
-
-![](./images/clip2.gif)
